@@ -1,0 +1,113 @@
+#include <DHT.h>
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ThingSpeak.h>
+#include <ESP8266WiFi.h>
+#include <ThingSpeak.h>
+#include <BlynkSimpleEsp8266.h>
+#define BLYNK_PRINT Serial
+#define DHTPIN D5
+#define DHTTYPE DHT11
+
+// set pin to input
+char auth[] = "2f66ea6e452545aca8d7f682842879cf";
+unsigned long myChannelNumber = 739681;
+const char * myWriteAPIKey = "OM5CZDVGAT18KTGA";
+uint8_t k=0, l=0,u=0;
+WiFiClient client;
+DHT dht(DHTPIN, DHTTYPE);
+const char* ssid = "OnePlus";
+const char* password = "12345678";
+const int sensor_pin = A0;
+float moisture_percentage,temperature,humidity;
+BlynkTimer timer;
+
+// This function sends Arduino's up time every second to Virtual Pin (5).
+// In the app, Widget's reading frequency should be set to PUSH. This means
+// that you define how often to send data to Blynk App.
+void myTimerEvent()
+{
+  // You can send any value at any time.
+  // Please don't send more that 10 values per second.
+  
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+  moisture_percentage = ( 100.00 - ( (analogRead(sensor_pin)/1023.00) * 100.00 ) );
+  k=temperature;
+  l=humidity;
+  u=temperature;
+  Blynk.virtualWrite(V5, moisture_percentage);
+  Blynk.virtualWrite(V4, temperature);
+  Blynk.virtualWrite(V3, humidity);
+  if(moisture_percentage>50)
+  {
+    digitalWrite(D6, LOW);
+  }
+  if(moisture_percentage<30)
+  {
+    digitalWrite(D6, HIGH);
+  }
+}
+
+
+/*void thing()
+{
+  Serial.print("Soil Moisture(in Percentage) = ");
+  Serial.print(moisture_percentage);
+  Serial.println("%");
+  //u=( 100.00 - ( (analogRead(sensor_pin)/1023.00) * 100.00 ) );
+  Serial.print("Temperature Value is :");
+  Serial.print(temperature);
+  Serial.println("C");
+  Serial.print("Humidity Value is :");
+  Serial.print(humidity);
+  Serial.println("%");
+  ThingSpeak.setField(1,k);
+  ThingSpeak.setField(2,u);
+  ThingSpeak.setField(3,l);
+  ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+}*/
+
+
+void setup()
+{
+// Debug console
+  Serial.begin(115200);
+  pinMode(D6, OUTPUT);
+  Blynk.begin(auth, ssid, password);
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  // Print the IP address 
+  Serial.println(WiFi.localIP());
+  //ThingSpeak.begin(client);
+  // Setup a function to be called every second
+  timer.setInterval(1000L, myTimerEvent);
+  //timer.setInterval(15000L, thing);
+}
+
+
+void loop()
+{
+  Serial.print("Soil Moisture(in Percentage) = ");
+  Serial.print(moisture_percentage);
+  Serial.println("%");
+  //u=( 100.00 - ( (analogRead(sensor_pin)/1023.00) * 100.00 ) ); 
+  Serial.print("Temperature Value is :"); 
+  Serial.print(temperature);
+  Serial.println("C");
+  Serial.print("Humidity Value is :");
+  Serial.print(humidity);
+  Serial.println("%");
+  Blynk.run();
+  timer.run(); // Initiates BlynkTimer
+}
