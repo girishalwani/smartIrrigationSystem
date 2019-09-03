@@ -1,0 +1,6 @@
+# smartIrrigationSystem
+
+In this project the automation of watering to garden has to be implemented.In this automated world the technology takes place everywhere. 
+For the aspect of creating comfort zone, a system is designed for the garden maintenance.The present system reduces the man power and also reduces the wastage of the natural resource like water. The temperature sensor, the humidity sensor and the soil sensor will be utilized for this purpose. The humidity sensor will monitor the atmospheric wetness among the plant community and the temperature sensor will monitor the temperature level surrounds the plant and the soil sensor will monitor the wetness of the soil around the plant. The values obtained from these sensors will be sent to cloud (Thinkspeak) and the data from there will be sent to our phone app (Blynk). The data received by our phone app can be tracked anywhere and the pump of can be controlled accordingly.
+
+There are two modes in the system, manual and automatic mode. The set value for the ideal humidity is 30-50, that is when the value remains in this range it will be in manual mode. And whenever the value drops less than 30, then the motor is automatically turned ON. In this way we can have a real time to time monitoring of the gardens and can take care of the plants by accessing the environment properly.
